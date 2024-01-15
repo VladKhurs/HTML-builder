@@ -16,10 +16,10 @@ fs.readdir(filePath, (err, files) => {
     else { 
         files.forEach(file => { 
             fs.copyFile(path.join(filePath, file), path.join(filePathTarget, file), (err) => {
-              if (err) {
-                  console.log(err);
-              }
-          });
+                if (err) {
+                    console.log(err);
+                }
+            });
         }) 
     } 
 })
