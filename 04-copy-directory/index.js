@@ -17,7 +17,7 @@ fs.readdir(filePath, (err, files) => {
         files.forEach(file => { 
             fs.copyFile(path.join(filePath, file), path.join(filePathTarget, file), (err) => {
               if (err) {
-                  console.log("Error Found:", err);
+                  console.log(err);
               }
           });
         }) 
