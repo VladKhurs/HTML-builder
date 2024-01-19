@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-fs.mkdir(path.join(__dirname, 'project-dist1111314'),
+fs.mkdir(path.join(__dirname, 'project-dist'),
     { recursive: true },
     (err) => {
         if (err) {
             return console.error(err);
         }
 });
-const projectPath = path.join(__dirname, '/project-dist1111314');
+const projectPath = path.join(__dirname, '/project-dist');
 fs.mkdir(path.join(projectPath, 'assets'),
     { recursive: true },
     (err) => {
@@ -107,11 +107,10 @@ async function compileHtml(filePath) {
         while (dataMutate.indexOf('{{') !== -1) {
             let tagCompon = dataMutate.slice(dataMutate.indexOf('{{'), dataMutate.indexOf('}}') + 2)
             let componWord = tagCompon.slice(2, tagCompon.length - 2)
-            let isExist = false;
-                const innerReader = fs.createReadStream(path.join(componentsPath, componWord + '.html'), 'utf8');
-                for await (const data of innerReader) {
-                    dataMutate = dataMutate.replace(tagCompon, data);
-                }
+            const innerReader = fs.createReadStream(path.join(componentsPath, componWord + '.html'), 'utf8');
+            for await (const data of innerReader) {
+                dataMutate = dataMutate.replace(tagCompon, data);
+            }
         }
         const stream = fs.createWriteStream(htmlPath, {flags: 'a'});
         stream.write(dataMutate, 'utf8');
