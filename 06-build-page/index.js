@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-fs.mkdir(path.join(__dirname, 'project-dist'),
+fs.mkdir(path.join(__dirname, 'project-ddiisstt'),
     { recursive: true },
     (err) => {
         if (err) {
             return console.error(err);
         }
 });
-const projectPath = path.join(__dirname, '/project-dist');
+const projectPath = path.join(__dirname, '/project-ddiisstt');
 fs.mkdir(path.join(projectPath, 'assets'),
     { recursive: true },
     (err) => {
@@ -17,25 +17,27 @@ fs.mkdir(path.join(projectPath, 'assets'),
 });
 const assetsPath = path.join(__dirname, 'assets');
 const assetsPathTarget = path.join(projectPath, 'assets');
-fs.readdir(assetsPath, (err, files) => { 
-    if (err) {
-        console.log(err); 
-    }
-    else { 
-        files.forEach(folder => { 
-            const currentFolder = path.join(assetsPathTarget, folder)
-            const dataFolder = path.join(assetsPath, folder)
-            fs.mkdir(currentFolder,
-                { recursive: true },
-                (err) => {
-                    if (err) {
-                        return console.error(err);
-                    }
-            });
-        }) 
-    } 
-})
-let readWriter = () => {
+const createFolders = () => {
+    fs.readdir(assetsPath, (err, files) => { 
+        if (err) {
+            console.log(err); 
+        }
+        else { 
+            files.forEach(folder => { 
+                fs.mkdir(path.join(assetsPathTarget, folder),
+                    { recursive: true },
+                    (err) => {
+                        if (err) {
+                            return console.error(err);
+                        }
+                });
+                let pathAssetsFolder = path.join(assetsPathTarget, folder);
+            }) 
+        } 
+    })
+}
+createFolders();
+const copyDir = () => {
     fs.readdir(assetsPath, (err, files) => { 
         if (err) {
             console.log(err); 
@@ -62,7 +64,7 @@ let readWriter = () => {
         } 
     })
 }
-readWriter()
+copyDir();
 const stylePath = path.join(projectPath, 'style.css');
 const streamClean = fs.createWriteStream(stylePath, {flags: 'w'});
 streamClean.write('');
