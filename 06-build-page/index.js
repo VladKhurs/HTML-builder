@@ -1,70 +1,58 @@
 const fs = require('fs');
 const path = require('path');
-fs.mkdir(path.join(__dirname, 'project-ddiisstt'),
-    { recursive: true },
-    (err) => {
+const fsPromises = fs.promises; 
+const projectName = 'project-dist'
+const createFolders = (assetsPath, assetsPathTarget) => {
+    fs.readdir(assetsPath, (err, files) => {
         if (err) {
-            return console.error(err);
-        }
-});
-const projectPath = path.join(__dirname, '/project-ddiisstt');
-fs.mkdir(path.join(projectPath, 'assets'),
-    { recursive: true },
-    (err) => {
-        if (err) {
-            return console.error(err);
-        }
-});
-const assetsPath = path.join(__dirname, 'assets');
-const assetsPathTarget = path.join(projectPath, 'assets');
-const createFolders = () => {
-    fs.readdir(assetsPath, (err, files) => { 
-        if (err) {
-            console.log(err); 
-        }
-        else { 
-            files.forEach(folder => { 
-                fs.mkdir(path.join(assetsPathTarget, folder),
-                    { recursive: true },
-                    (err) => {
-                        if (err) {
-                            return console.error(err);
-                        }
-                });
-                let pathAssetsFolder = path.join(assetsPathTarget, folder);
-            }) 
-        } 
-    })
-}
-createFolders();
-const copyDir = () => {
-    fs.readdir(assetsPath, (err, files) => { 
-        if (err) {
-            console.log(err); 
+            console.log(err);
         }
         else {
-            files.forEach(folder => { 
-                const currentFolder = path.join(assetsPathTarget, folder)
-                const dataFolder = path.join(assetsPath, folder)
-                fs.readdir(dataFolder, (err, innerFiles) => { 
-                    if (err) {
-                        console.log(err); 
-                    }
-                    else { 
-                        innerFiles.forEach(file => { 
-                            fs.copyFile(path.join(dataFolder, file), path.join(currentFolder, file), (err) => {
-                                if (err) {
+            files.forEach(folder => {
+                fsPromises.mkdir(path.join(assetsPathTarget, folder),
+                { recursive: true }).then(function() {
+                    console.log('Directory folder created successfully');
+                    const currentFolder = path.join(assetsPathTarget, folder)
+                    const dataFolder = path.join(assetsPath, folder)
+                    fs.readdir(dataFolder, (err, innerFiles) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            innerFiles.forEach(file => {
+                                console.log('File was copied');
+                                fs.copyFile(path.join(dataFolder, file), path.join(currentFolder, file), (err) => {
+                                    if (err) {
                                         console.log(err);
-                                }
-                            });
-                        }) 
-                    } 
-                })
-            }) 
-        } 
+                                    }
+                                });
+                            })
+                        }
+                    })
+                }).catch(function() {
+                    console.log('failed folder to create directory');
+                });
+            })
+        }
     })
 }
-copyDir();
+fsPromises.mkdir(path.join(__dirname, projectName),
+{ recursive: true }).then(function() { 
+    console.log('projectName created successfully');
+    const projectPath = path.join(__dirname, projectName);
+    fsPromises.mkdir(path.join(projectPath, 'assets'),
+    { recursive: true }).then(function() {
+        const assetsPathIn = path.join(__dirname, 'assets');
+        const assetsPathTargetIn = path.join(projectPath, 'assets');
+        createFolders(assetsPathIn, assetsPathTargetIn);
+        console.log('assets created successfully');
+    }).catch(function() {
+        console.log('failed assets to create directory');
+    });
+}).catch(function() { 
+    console.log('failed projectName to create directory'); 
+}); 
+const projectPath = path.join(__dirname, projectName);
 const stylePath = path.join(projectPath, 'style.css');
 const streamClean = fs.createWriteStream(stylePath, {flags: 'w'});
 streamClean.write('');
@@ -78,12 +66,12 @@ async function fileReaderAndWriter(filePath) {
     }
 }
 const stylesPath = path.join(__dirname, '/styles');
-fs.readdir(stylesPath, (err, files) => { 
+fs.readdir(stylesPath, (err, files) => {
     if (err) {
-        console.log(err); 
+        console.log(err);
     }
     else {
-        files.forEach(file => { 
+        files.forEach(file => {
             fs.stat(path.join(stylesPath, file), (err, stats) => {
                 if (err) {
                     console.error(err);
@@ -94,7 +82,7 @@ fs.readdir(stylesPath, (err, files) => {
                 }
             });
         })
-    } 
+    }
 })
 const htmlPath = path.join(projectPath, 'index.html');
 const componentsPath = path.join(__dirname, '/components');
